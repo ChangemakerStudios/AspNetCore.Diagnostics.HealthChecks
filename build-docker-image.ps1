@@ -1,5 +1,5 @@
 Param(
-    [parameter(Mandatory = $false)][bool]$PublishToDockerHub = $false
+    [parameter(Mandatory = $false)][bool]$PublishToDockerHub = $true
 )
 
 
@@ -26,8 +26,8 @@ $tag = $version.node.InnerXML
 
 echo "building docker image with tag: $tag"
 
-exec { & docker build . -f ./build/docker-images/HealthChecks.UI.Image/Dockerfile -t xabarilcoding/healthchecksui:$tag }
-exec { & docker tag xabarilcoding/healthchecksui:$tag xabarilcoding/healthchecksui:latest }
+exec { & docker build . -f ./build/docker-images/HealthChecks.UI.Image/Dockerfile -t proget.captiveaire.com/specbuilder-commerce/healthchecksui:$tag }
+exec { & docker tag proget.captiveaire.com/specbuilder-commerce/healthchecksui:$tag proget.captiveaire.com/specbuilder-commerce/healthchecksui:latest }
 
 echo "Created docker image healthchecksui:$tag. You can execute this image using docker run"
 echo "Sample: docker run --name ui -p 5000:80 -e 'HealthChecksUI:HealthChecks:0:Name=httpBasic' -e 'HealthChecksUI:HealthChecks:0:Uri=http://www.google.es' -d healthchecksui:dev"
@@ -35,6 +35,8 @@ echo "Sample: docker run --name ui -p 5000:80 -e 'HealthChecksUI:HealthChecks:0:
 #Publish it
 
 if ($PublishToDockerHub) {
+    echo "Pushing docker image healthchecksui:$tag"
+
     docker push proget.captiveaire.com/specbuilder-commerce/healthchecksui:$tag 
     docker push proget.captiveaire.com/specbuilder-commerce/healthchecksui:latest 
 }
