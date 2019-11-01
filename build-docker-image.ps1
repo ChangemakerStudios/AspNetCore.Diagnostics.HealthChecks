@@ -1,14 +1,13 @@
 Param(
-    [parameter(Mandatory=$false)][bool]$PublishToDockerHub=$false
+    [parameter(Mandatory = $false)][bool]$PublishToDockerHub = $false
 )
 
 
-function Exec
-{
+function Exec {
     [CmdletBinding()]
     param(
-        [Parameter(Position=0,Mandatory=1)][scriptblock]$cmd,
-        [Parameter(Position=1,Mandatory=0)][string]$errorMessage = ($msgs.error_bad_command -f $cmd)
+        [Parameter(Position = 0, Mandatory = 1)][scriptblock]$cmd,
+        [Parameter(Position = 1, Mandatory = 0)][string]$errorMessage = ($msgs.error_bad_command -f $cmd)
     )
     & $cmd
     if ($lastexitcode -ne 0) {
@@ -27,7 +26,7 @@ $tag = $version.node.InnerXML
 
 echo "building docker image with tag: $tag"
 
-exec { & docker build . -f .\build\docker-images\HealthChecks.UI.Image\Dockerfile -t xabarilcoding/healthchecksui:$tag }
+exec { & docker build . -f ./build/docker-images/HealthChecks.UI.Image/Dockerfile -t xabarilcoding/healthchecksui:$tag }
 exec { & docker tag xabarilcoding/healthchecksui:$tag xabarilcoding/healthchecksui:latest }
 
 echo "Created docker image healthchecksui:$tag. You can execute this image using docker run"
@@ -35,7 +34,7 @@ echo "Sample: docker run --name ui -p 5000:80 -e 'HealthChecksUI:HealthChecks:0:
 
 #Publish it
 
-if($PublishToDockerHub){
+if ($PublishToDockerHub) {
     docker push xabarilcoding/healthchecksui:$tag 
     docker push xabarilcoding/healthchecksui:latest 
 }
