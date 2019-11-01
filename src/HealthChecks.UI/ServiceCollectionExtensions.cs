@@ -12,6 +12,7 @@ using Microsoft.Extensions.Options;
 using System;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using HealthChecks.UI.Core.Discovery;
 using HealthChecks.UI.Core.Discovery.Docker;
@@ -29,9 +30,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddOptions()
                 .Configure<Settings>(settings =>
                 {
-                    configuration.GetSection(Keys.HEALTHCHECKSUI_SECTION_SETTING_KEY)
-                        .Bind(settings, c => c.BindNonPublicProperties = true);
-
+                    configuration.BindUISettings(settings);
                     setupSettings?.Invoke(settings);
                 })
                 .Configure<KubernetesDiscoverySettings>(settings =>
@@ -45,7 +44,18 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddSingleton<IHostedService, HealthCheckCollectorHostedService>()
                 .AddScoped<IHealthCheckFailureNotifier, WebHookFailureNotifier>()
                 .AddScoped<IHealthCheckReportCollector, HealthCheckReportCollector>()
-                .AddHttpClient(Keys.HEALTH_CHECK_HTTP_CLIENT_NAME);
+                .AddHttpClient(Keys.HEALTH_CHECK_HTTP_CLIENT_NAME)
+                .ConfigurePrimaryHttpMessageHandler(sp =>
+                {
+                    var settings = sp.GetService<IOptions<Settings>>();
+                    return settings.Value.ApiEndpointHttpHandler?.Invoke(sp) ?? new HttpClientHandler();
+                }).Services
+                .AddHttpClient(Keys.HEALTH_CHECK_WEBHOOK_HTTP_CLIENT_NAME)
+                .ConfigurePrimaryHttpMessageHandler(sp =>
+                {
+                    var settings = sp.GetService<IOptions<Settings>>();
+                    return settings.Value.WebHooksEndpointHttpHandler?.Invoke(sp) ?? new HttpClientHandler();
+                });
 
             var healthCheckSettings = services.BuildServiceProvider()
                 .GetService<IOptions<Settings>>()

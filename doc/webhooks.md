@@ -46,7 +46,7 @@ You must escape the json before setting the **Payload** property in the configur
         "RestoredPayload": "{\"text\":\"The HealthCheck [[LIVENESS]] is recovered. All is up and running\",\"channel\":\"#general\",\"link_names\": 1,\"username\":\"monkey-bot\",\"icon_emoji\":\":monkey_face\" }"
       }
     ],
-    "EvaluationTimeOnSeconds": 10
+    "EvaluationTimeInSeconds": 10
   }
 }
 ```
@@ -118,7 +118,7 @@ public static async Task Run(HttpRequestMessage req, IAsyncCollector<Mail> messa
 
 ```json
 {
-  "HealthChecks-UI": {
+  "HealthChecksUI": {
     "HealthChecks": [
       {
         "Name": "HTTP-Api-Basic",
@@ -132,7 +132,7 @@ public static async Task Run(HttpRequestMessage req, IAsyncCollector<Mail> messa
         "Payload": "{\"HealthCheck\": \"[[LIVENESS]]\",\"message\": \"[[FAILURE]]\"}"
       }
     ],
-    "EvaluationTimeOnSeconds": 10
+    "EvaluationTimeInSeconds": 10
   }
 }
 ```
@@ -157,7 +157,7 @@ And the HealthChecksUI configuration:
 
 ```json
 {
-  "HealthChecks-UI": {
+  "HealthChecksUI": {
     "HealthChecks": [
       {
         "Name": "HTTP-Api-Basic",
@@ -172,7 +172,7 @@ And the HealthChecksUI configuration:
         "RestoredPayload": "{\"text\":\"The HealthCheck [[LIVENESS]] is recovered. All is up and running\",\"channel\":\"#general\",\"link_names\": 1,\"username\":\"monkey-bot\",\"icon_emoji\":\":monkey_face\" }"
       }
     ],
-    "EvaluationTimeOnSeconds": 10
+    "EvaluationTimeInSeconds": 10
   }
 }
 ```
